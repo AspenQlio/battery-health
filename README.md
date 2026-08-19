@@ -1,4 +1,4 @@
-# Lector de salud de batería para Linux + Windows
+# Lector de salud de batería para Linux + Windows experimental
 
 > Objetivo: revisar rápido si una batería de laptop está buena o degradada, mostrando capacidad máxima real, capacidad de diseño, porcentaje de salud y ciclos de carga sin instalar programas pesados.
 
@@ -23,7 +23,7 @@ Si una batería dice tener `31 Wh` de `51 Wh`, su salud real ronda el `61%`. Pue
 ## 2. Arquitectura
 
 ```text
-[Linux]
+[Linux - principal]
   battery-health.sh
       |
       v
@@ -32,7 +32,7 @@ Si una batería dice tener `31 Wh` de `51 Wh`, su salud real ronda el `61%`. Pue
       v
   capacidad, salud, ciclos
 
-[Windows]
+[Windows - experimental]
   battery-health.cmd
       |
       v
@@ -49,7 +49,7 @@ La idea es la misma en ambos sistemas: leer los datos que ya entrega el firmware
 
 ## 3. Requisitos
 
-### Linux
+### Linux - principal
 
 - Bash.
 - `awk`.
@@ -57,19 +57,19 @@ La idea es la misma en ambos sistemas: leer los datos que ya entrega el firmware
 
 No requiere `sudo` para leer la batería en la mayoría de distribuciones.
 
-### Windows
+### Windows - experimental
 
 - Windows 10 o Windows 11.
 - PowerShell 5 o superior.
 - WMI/CIM funcionando.
 
-> **Estado:** la versión de Windows está incluida, pero todavía **no fue testeada en una máquina Windows real**. La dejé documentada para probarla después; la versión Linux sí fue ejecutada y verificada en la HP EliteBook 840 G4.
+> **Estado:** la versión de Windows está incluida como experimental, pero **ya fue probada una vez y no funcionó**. Falta capturar el mensaje de error exacto en Windows para corregirla. La versión Linux sí fue ejecutada y verificada en la HP EliteBook 840 G4.
 
 No debería requerir permisos de administrador. Si Windows no entrega todos los datos, probar abriendo PowerShell como administrador.
 
 ## 4. Instalación paso a paso
 
-### 4.1 Linux
+### 4.1 Linux - principal
 
 Entrar a la carpeta del proyecto:
 
@@ -95,9 +95,9 @@ Si la batería no aparece como `BAT0`, se puede pasar la ruta manualmente:
 ./battery-health.sh /sys/class/power_supply/BAT1
 ```
 
-### 4.2 Windows
+### 4.2 Windows - experimental
 
-> **Aviso:** esta sección aún no está testeada en Windows. El script usa WMI/CIM estándar, pero falta validarlo en una instalación real de Windows.
+> **Aviso:** esta sección todavía no se considera funcional. El script Windows falló en una prueba real; queda pendiente revisar el error exacto para arreglar la lectura WMI/CIM.
 
 Copiar estos dos archivos a la misma carpeta en Windows:
 
@@ -118,7 +118,7 @@ O desde PowerShell:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\battery-health.ps1
 ```
 
-El `.cmd` existe para que sea más cómodo: llama al script de PowerShell con `ExecutionPolicy Bypass` solo para esa ejecución.
+El `.cmd` llama al script de PowerShell con `ExecutionPolicy Bypass` solo para esa ejecución.
 
 ## 5. Captura y datos reales
 
@@ -160,13 +160,13 @@ bash -n battery-health.sh
 
 La primera línea revisa que no haya errores de sintaxis. La segunda comprueba que el script realmente pueda leer la batería instalada.
 
-En Windows:
+En Windows, la prueba pendiente es ejecutar:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\battery-health.ps1
 ```
 
-Si imprime capacidad máxima, capacidad de diseño, salud y ciclos, está funcionando.
+Si falla, copiar el mensaje de error completo para corregir la versión experimental.
 
 ## 7. Errores que me encontré (y cómo resolverlos)
 
@@ -210,6 +210,7 @@ Si imprime capacidad máxima, capacidad de diseño, salud y ciclos, está funcio
 
 - El porcentaje de carga no sirve para saber si una batería está sana.
 - La métrica importante es la relación entre **capacidad máxima actual** y **capacidad de diseño**.
+- El script principal es `battery-health.sh` para Linux.
 - En Linux los datos salen desde `/sys/class/power_supply`.
-- En Windows salen desde WMI/CIM.
+- La versión Windows queda como experimental porque falló en una prueba real y falta revisar el error exacto.
 - Si una batería usada conserva solo `60%` de salud, puede servir, pero no debería venderse como nueva.
