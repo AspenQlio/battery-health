@@ -1,5 +1,7 @@
 # Battery Health Monitor
 
+> **[Español] → La documentación completa, con instalación paso a paso y los errores que me encontré, está en [README.es.md](README.es.md).**
+
 A lightweight Linux utility designed to extract and monitor hardware battery telemetry without relying on heavy desktop environments.
 
 ## Purpose
